@@ -18,7 +18,7 @@ class Agent
   end
 
   def handle_epub(text)
-    if url = find text
+    if url = find(text)
       file = download url
       send file
     end
