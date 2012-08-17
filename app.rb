@@ -12,7 +12,12 @@ class Agent
     @login, @password = login, password
   end
 
-  def handle(text)
+  def handle_confirmation(text)
+    url = text.match(%r[https://isolated\.mail\.google\.com/mail/\S+])[0]
+    @agent.get url
+  end
+
+  def handle_epub(text)
     url = find text
     file = download url
     send file
@@ -32,6 +37,16 @@ class Agent
   end
 
   def send(page)
+    send_email(
+      :from => ENV['EMAIL_FROM'],
+      :to => "trigger@ifttt.com",
+      :subject => "#epub #yakanhiko #{page.filename}",
+      :text => "Attached #{page.filename}",
+      :attachment => Faraday::UploadIO.new(page.body_io, page.response['content-type'], page.filename)
+    )
+  end
+
+  def send_email(params)
     url = "https://api:#{ENV['MAILGUN_API_KEY']}@api.mailgun.net"
 
     conn = Faraday::new(:url => url) do |builder|
@@ -42,20 +57,18 @@ class Agent
 
     response = conn.post do |req|
       req.url "/v2/#{ENV['MAILGUN_DOMAIN']}/messages"
-      req.body = {
-        :from => ENV['EMAIL_FROM'],
-        :to => "trigger@ifttt.com",
-        :subject => "#epub #yakanhiko #{page.filename}",
-        :text => "Attached #{page.filename}",
-        :attachment => Faraday::UploadIO.new(page.body_io, page.response['content-type'], page.filename)
-      }
+      req.body = params
     end
   end
 end
 
 post '/receive' do
   agent = Agent.new(ENV['YAKAN_HIKO_LOGIN'], ENV['YAKAN_HIKO_PASSWORD'])
-  agent.handle(params['stripped-text'])
+  if params['subject'].match /Gmail Forwarding Confirmation/
+    agent.handle_confirmation(params['stripped-text'])
+  else
+    agent.handle_epub(params['stripped-text'])
+  end
   "OK"
 end
 
