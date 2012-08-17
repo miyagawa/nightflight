@@ -18,13 +18,15 @@ class Agent
   end
 
   def handle_epub(text)
-    url = find text
-    file = download url
-    send file
+    if url = find text
+      file = download url
+      send file
+    end
   end
 
   def find(text)
-    text.match(%r|http://yakan-hiko\.com/EPUB\d+|)[0]
+    match = text.match(%r|http://yakan-hiko\.com/EPUB\d+|)
+    match[0] if match
   end
 
   def download(url)
