@@ -2,7 +2,7 @@
 
 Gmail → Mailgun → Heroku → IFTTT
 
-This tiny app receives emails from yakan-hiko via [Mailgun](http://www.mailgun.com), downloads the epub file and sends it to [IFTTT](https://ifttt.com/) with "#epub #yakanhiko" in the subject for further automation.
+This tiny app receives emails from [yakan-hiko](http://yakan-hiko.com/) via [Mailgun](http://www.mailgun.com), downloads the epub file and sends it to [IFTTT](https://ifttt.com/) with "#epub #yakanhiko" in the subject for further automation.
 
 I personally setup IFTTT recipe to send it to [Wappwolf](http://wappwolf.com/) dropbox folder to send to Kindle.
 
