@@ -31,7 +31,7 @@ class Agent
 
   def download(url)
     page = @agent.get 'https://yakan-hiko.com/login.php'
-    form = page.form_with(:name => 'contact')
+    form = page.form_with(:method => "POST")
     form.login_id = @login
     form.pass = @password
     @agent.submit form
