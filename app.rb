@@ -8,7 +8,7 @@ require 'mechanize'
 class Agent
   def initialize(login, password)
     @agent = Mechanize.new
-    @agent.pluggable_parser['application/mobi+zip'] = Mechanize::Download
+    @agent.pluggable_parser['application/x-mobipocket-ebook'] = Mechanize::Download
     @login, @password = login, password
   end
 
