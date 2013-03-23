@@ -1,5 +1,5 @@
-# Receives yakan-hiko email forwarded, download the epub, send it to trigger@ifttt.com
-# with .epub as an attachment
+# Receives yakan-hiko email forwarded, download the MOBI, send it to trigger@ifttt.com
+# with .mobi as an attachment
 
 require 'sinatra'
 require 'faraday'
@@ -8,7 +8,7 @@ require 'mechanize'
 class Agent
   def initialize(login, password)
     @agent = Mechanize.new
-    @agent.pluggable_parser['application/epub+zip'] = Mechanize::Download
+    @agent.pluggable_parser['application/mobi+zip'] = Mechanize::Download
     @login, @password = login, password
   end
 
@@ -17,7 +17,7 @@ class Agent
     @agent.get url
   end
 
-  def handle_epub(text)
+  def handle_mobi(text)
     if url = find(text)
       file = download url
       send file
@@ -25,7 +25,7 @@ class Agent
   end
 
   def find(text)
-    match = text.match(%r|http://yakan-hiko\.com/EPUB\d+|)
+    match = text.match(%r|http://yakan-hiko\.com/MOBI\d+|)
     match[0] if match
   end
 
@@ -42,7 +42,7 @@ class Agent
     send_email(
       :from => ENV['EMAIL_FROM'],
       :to => "trigger@ifttt.com",
-      :subject => "#epub #yakanhiko #{page.filename}",
+      :subject => "#epub #mobi #yakanhiko #{page.filename}",
       :text => "Attached #{page.filename}",
       :attachment => Faraday::UploadIO.new(page.body_io, page.response['content-type'], page.filename)
     )
@@ -69,7 +69,7 @@ post '/receive' do
   if params['subject'].match /Gmail Forwarding Confirmation/
     agent.handle_confirmation(params['stripped-text'])
   else
-    agent.handle_epub(params['stripped-text'])
+    agent.handle_mobi(params['stripped-text'])
   end
   "OK"
 end
