@@ -41,7 +41,7 @@ class Agent
   def send(page)
     send_email(
       :from => ENV['EMAIL_FROM'],
-      :to => "trigger@ifttt.com",
+      :to => ENV['EMAIL_TO'] || "trigger@ifttt.com",
       :subject => "#epub #mobi #yakanhiko #{page.filename}",
       :text => "Attached #{page.filename}",
       :attachment => Faraday::UploadIO.new(page.body_io, page.response['content-type'], page.filename)
